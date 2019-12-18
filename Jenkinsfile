@@ -11,22 +11,26 @@ pipeline {
    
    stages{
       stage("Maven Build"){
-         stepes{
+         steps{
                sh "mvn clean package"
                sh "mv target/*war target/myweb.war"
          }
      }
       
       stage("deploy-dev"){
-         sshagent(['tomcat-server']) {
+         steps{
+            sshagent(['tomcat-server']) {
             ssh """
                scp -o StrictHostKeyChecking=no target/myweb.war ec2-user@172.31.11.242:/opt/tomcat/webapp/
             ssh ec2-user@172.31.11.242 /opt/tomcat/bin/shutdown.sh
             ssh ec2-user@172.31.11.242 /opt/tomcat/bin/startup.sh
           
           """
+            }
+         
+          }
           
-      }
+        }
       
       }
    
