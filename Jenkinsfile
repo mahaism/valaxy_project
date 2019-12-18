@@ -1,14 +1,14 @@
 pipeline{
     agent any
-
+    
     environment{
-        PATH="/opt/maven/bin:$PATH"
+        PATH = "/opt/maven/bin:$PATH"
     }
     stages{
         stage("Git Checkout"){
             steps{
-                git credentialsId:  'github', url:  'https://https://github.com/mahaism/valaxy_project.git'
-           }
+                git credentialsId: 'github', url: 'https://github.com/mahaism/valaxy_project.git'
+            }
         }
         stage("Maven Build"){
             steps{
@@ -19,18 +19,17 @@ pipeline{
         stage("deploy-dev"){
             steps{
                 sshagent(['tomcat-server']) {
-                ssh """
-                scp -o StrictHostKeyChecking=no target/myweb.war ec2-user@172.31.11.242:/opt/tomcat/webapp/
+                sh """
+                    scp -o StrictHostKeyChecking=no target/myweb.war  ec2-user@172.31.11.242:/opt/tomcat/webapps/
+                    
+                    ssh ec2-user@172.31.11.242 /opt/tomcat/bin/shutdown.sh
+                    
+                    ssh ec2-user@172.31.11.242 /opt/tomcat/bin/startup.sh
                 
-                ssh ec2-user@172.31.11.242 /opt/tomcat/bin/shutdown.sh
-                
-                ssh ec2-user@172.31.11.242 /opt/tomcat/bin/startup.sh
-          
                 """
             }
-        
-         }
-        
+            
+            }
         }
     }
 }
