@@ -16,20 +16,7 @@ pipeline{
                 //sh "mv target/*.war target/webapp.war"
             }
         }
-        stage("deploy-dev"){
-            steps{
-                sshagent(['tomcat-server']) {
-                sh """
-                    scp -o StrictHostKeyChecking=no target/webapp.war  ec2-user@52.66.22.121:/opt/tomcat/webapps/
-                    
-                    ssh ec2-user@52.66.22.121 /opt/tomcat/bin/shutdown.sh
-                    
-                    ssh ec2-user@52.66.22.121 /opt/tomcat/bin/startup.sh
-                
-                """
-            }
-            
-            }
+        
         }
     }
 }
